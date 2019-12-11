@@ -1,19 +1,23 @@
 <template>
 	<view class="container">
-		<uni-section title="未报销" type="line"></uni-section>
+		<uni-section class="unreimed-section" title="未报销" type="line"></uni-section>
 		<uni-swipe-action>
-			<uni-swipe-action-item class="unreimed-swipe-action-item" :options="options" v-for="(item, index) in unreimedItems" :key="item.id">
-				<uni-list-item class="unreimed-list-item" show-arrow="false">
-					<text class="cont">{{ item.money }}</text>
+			<uni-swipe-action-item class="unreimed-swipe-action-item" :options="unreimedOptions" v-for="(item, index) in unreimedItems" :key="item.id" @click="onActionItemClick">
+				<uni-list-item class="unreimed-list-item" show-arrow="false" @click="onListItemClick">
+					<view @tap="onItemTap" class="unreimed-view">
+						<text class="cont">{{ item.money }}</text>
+					</view>
 				</uni-list-item>
 			</uni-swipe-action-item>
 		</uni-swipe-action>
 
 		<uni-section title="已报销" type="line"></uni-section>
 		<uni-swipe-action>
-			<uni-swipe-action-item class="reimed-swipe-action-item" :options="options" v-for="(item, index) in reimedItems" :key="item.id">
-				<uni-list-item class="reimed-list-item" show-arrow="false">
-					<text class="cont">{{ item.money }}</text>
+			<uni-swipe-action-item class="reimed-swipe-action-item" :options="reimedOptions" v-for="(item, index) in reimedItems" :key="item.id" @click="onActionItemClick">
+				<uni-list-item class="reimed-list-item" show-arrow="false" @click="onListItemClick">
+					<view @tap="onItemTap" class="reimed-view">
+						<text class="cont">{{ item.money }}</text>
+					</view>
 				</uni-list-item>
 			</uni-swipe-action-item>
 		</uni-swipe-action>
@@ -40,7 +44,7 @@ export default {
 		return {
 			unreimedItems: [],
 			reimedItems: [],
-			options: [
+			unreimedOptions: [
 				{
 					text: '取消',
 					style: {
@@ -53,11 +57,37 @@ export default {
 						backgroundColor: '#dd524d'
 					}
 				}
+			],
+			reimedOptions: [
+				{
+					text: '取消',
+					style: {
+						backgroundColor: '#007aff'
+					}
+				},
+				{
+					text: '未报',
+					style: {
+						backgroundColor: '#dd524d'
+					}
+				}
 			]
 		};
 	},
 	methods: {
 		// ...mapActions('home', ['getData']),
+		onActionItemClick(e) {
+			console.log('当前点击的是第' + e.index + '个按钮，点击内容是' + e.content.text);
+		},
+		onListItemClick(e) {
+			console.log(e);
+		},
+		onItemTap(e) {
+			console.log(e.target);
+			uni.navigateTo({
+				url:"../../newrecordpage/index"
+			})
+		},
 		getData() {
 			var unreimedItems = [
 				{
@@ -134,14 +164,16 @@ view {
 /*  .content {
     width: 80%;
     margin: 0 auto;
-    line-height: 58rpx;
+    line-height: 58px;
     text-align: left;
   } */
+
 uni-section {
 	text-align: left;
 }
 
 uni-section .line {
+	height: 20px;
 	background-color: #6190e8 !important;
 }
 
@@ -154,6 +186,11 @@ uni-swipe-action-item {
 	border-bottom-color: #f5f5f5;
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
+}
+
+.reimed-view, .unreimed-view, .reimed-list-item, .unreimed-list-item  {
+	width: 100%;
+	text-align: left;
 }
 
 .cont {

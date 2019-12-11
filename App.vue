@@ -24,8 +24,8 @@ export default {
 
 <style>
 .container {
-  font-size: 26rpx;
-  text-align: center;
+  font-size: 30rpx;
+  background-color: #f4f5f6;
 }
 .wrapper {
   font-size: 26rpx;
