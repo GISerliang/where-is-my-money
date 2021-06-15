@@ -2,48 +2,82 @@
 	<view class="container">
 		<uni-section class="unreimed-section" title="未报销" type="line"></uni-section>
 		<uni-swipe-action>
-			<uni-swipe-action-item class="unreimed-swipe-action-item" :options="unreimedOptions" v-for="(item, index) in unreimedItems" :key="item.id" @click="onActionItemClick">
-				<uni-list-item class="unreimed-list-item" show-arrow="false" @click="onListItemClick">
-					<view @tap="onItemTap" class="unreimed-view">
-						<text class="cont">{{ item.money }}</text>
-					</view>
-				</uni-list-item>
+			<uni-swipe-action-item
+				class="unreimed-swipe-action-item"
+				:right-options="unreimedOptions"
+				:left-options="deleteOptions"
+				v-for="(item, index) in unreimedItems"
+				:key="item._id"
+				autoClose="true"
+				@click="onActionUnreimedItemClick($event, item)"
+			>
+				<uni-list-item
+					class="unreimed-list-item unreimed-view"
+					show-arrow="false"
+					:title="item.money.toFixed(2) + '-' + item.summary"
+					:note="item.project_name + ' ' + new Date(item.date).Format('yyyy-MM-dd')"
+					clickable
+					@click="onItemTap(index, item, 'unreimed')"
+				></uni-list-item>
 			</uni-swipe-action-item>
 		</uni-swipe-action>
 
 		<uni-section title="已报销" type="line"></uni-section>
 		<uni-swipe-action>
-			<uni-swipe-action-item class="reimed-swipe-action-item" :options="reimedOptions" v-for="(item, index) in reimedItems" :key="item.id" @click="onActionItemClick">
-				<uni-list-item class="reimed-list-item" show-arrow="false" @click="onListItemClick">
-					<view @tap="onItemTap" class="reimed-view">
-						<text class="cont">{{ item.money }}</text>
-					</view>
-				</uni-list-item>
+			<uni-swipe-action-item
+				class="reimed-swipe-action-item"
+				:left-options="deleteOptions"
+				:right-options="reimedOptions"
+				v-for="(item, index) in reimedItems"
+				:key="item._id"
+				autoClose="true"
+				@click="onActionReimedItemClick($event, item)"
+			>
+				<uni-list-item
+					class="reimed-list-item reimed-view"
+					show-arrow="false"
+					:title="item.money.toFixed(2) + '-' + item.summary"
+					:note="item.project_name + ' ' + new Date(item.date).Format('yyyy-MM-dd')"
+					clickable
+					@click="onItemTap(index, item, 'reimed')"
+				></uni-list-item>
 			</uni-swipe-action-item>
 		</uni-swipe-action>
+
+		<view class="uni-form-item uni-column">
+			<button type="primary" class="primary-button" @click="addRecord">
+				<Text>+</Text>
+				记一下
+			</button>
+		</view>
 	</view>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
-import uniSection from '@/components/uni-section/uni-section.vue';
-import uniSwipeAction from '@/components/uni-swipe-action/uni-swipe-action.vue';
-import uniSwipeActionItem from '@/components/uni-swipe-action-item/uni-swipe-action-item.vue';
+import { mapState, mapMutations } from 'vuex';
 export default {
+	onLoad() {},
 	mounted() {
-		// this.initPage()
+		let that = this;
 		this.getData();
+		uni.$on('ADD_RECORD_SUCCESS', function(record) {
+			that.getData();
+		});
 	},
-	components: {
-		uniSection,
-		uniSwipeAction,
-		uniSwipeActionItem
-	},
-	computed: {},
+	computed: mapState(['uniDb']),
 	data() {
 		return {
+			pretimestamp: new Date().valueOf(),
 			unreimedItems: [],
 			reimedItems: [],
+			deleteOptions: [
+				{
+					text: '删除',
+					style: {
+						backgroundColor: '#dd524d'
+					}
+				}
+			],
 			unreimedOptions: [
 				{
 					text: '取消',
@@ -75,66 +109,217 @@ export default {
 		};
 	},
 	methods: {
-		// ...mapActions('home', ['getData']),
-		onActionItemClick(e) {
-			console.log('当前点击的是第' + e.index + '个按钮，点击内容是' + e.content.text);
-		},
-		onListItemClick(e) {
-			console.log(e);
-		},
-		onItemTap(e) {
-			console.log(e.target);
+		addRecord(e) {
 			uni.navigateTo({
-				url:"../../newrecordpage/index"
-			})
+				url: '../../newrecordpage/index'
+			});
+		},
+		onActionReimedItemClick(e, item) {
+			let currenttimestamp = new Date().valueOf();
+			if (Math.abs(this.pretimestamp - currenttimestamp) < 200) {
+				return;
+			}
+			this.pretimestamp = currenttimestamp;
+
+			let that = this;
+			let { content } = e;
+			if (content.text === '删除') {
+				uni.showModal({
+					title: '提示',
+					content: '是否删除该记录',
+					cancelText: '取消删除',
+					confirmText: '确定删除',
+					success: res => {
+						if (res.confirm) {
+							if (that.uniDb) {
+								that.uniDb
+									.collection('records')
+									.doc(item._id)
+									.remove()
+									.then(res => {
+										that.getReimedData();
+									})
+									.catch(err => {
+										console.log(err);
+										uni.showToast({
+											title: '删除记录失败: ' + err.message,
+											icon: 'none'
+										});
+									});
+							}
+						}
+					}
+				});
+			} else if (content.text === '未报') {
+				uni.showModal({
+					title: '提示',
+					content: '是否更改该记录状态',
+					cancelText: '取消更改',
+					confirmText: '确定更改',
+					success: res => {
+						if (res.confirm) {
+							if (that.uniDb) {
+								let convert_item = JSON.parse(JSON.stringify(item));
+								convert_item.reimed = 0;
+								let id = convert_item._id;
+								convert_item.date = new Date(convert_item.date);
+								delete convert_item['_id'];
+								that.uniDb
+									.collection('records')
+									.doc(id)
+									.update(convert_item)
+									.then(res => {
+										that.getData();
+									})
+									.catch(err => {
+										console.log(err);
+										uni.showToast({
+											title: '更新记录失败: ' + err.message,
+											icon: 'none'
+										});
+									});
+							}
+						}
+					}
+				});
+			}
+		},
+		onActionUnreimedItemClick(e, item) {
+			let currenttimestamp = new Date().valueOf();
+			if (Math.abs(this.pretimestamp - currenttimestamp) < 200) {
+				// 事件会被触发两次（原因未知，可能和嵌套显示有关系），根据时间差过滤
+				return;
+			}
+			this.pretimestamp = currenttimestamp;
+
+			let that = this;
+			let { content } = e;
+			if (content.text === '删除') {
+				uni.showModal({
+					title: '提示',
+					content: '是否删除该记录',
+					cancelText: '取消删除',
+					confirmText: '确定删除',
+					success: res => {
+						if (res.confirm) {
+							if (that.uniDb) {
+								that.uniDb
+									.collection('records')
+									.doc(item._id)
+									.remove()
+									.then(res => {
+										that.getUnreimedData();
+									})
+									.catch(err => {
+										console.log(err);
+										uni.showToast({
+											title: '删除记录失败: ' + err.message,
+											icon: 'none'
+										});
+									});
+							}
+						}
+					}
+				});
+			} else if (content.text === '已报') {
+				uni.showModal({
+					title: '提示',
+					content: '是否更改该记录状态',
+					cancelText: '取消更改',
+					confirmText: '确定更改',
+					success: res => {
+						if (res.confirm) {
+							if (that.uniDb) {
+								let convert_item = JSON.parse(JSON.stringify(item));
+								convert_item.reimed = 1;
+								let id = convert_item._id;
+								convert_item.date = new Date(convert_item.date);
+								delete convert_item['_id'];
+								that.uniDb
+									.collection('records')
+									.doc(id)
+									.update(convert_item)
+									.then(res => {
+										that.getData();
+									})
+									.catch(err => {
+										console.log(err);
+										uni.showToast({
+											title: '更新记录失败: ' + err.message,
+											icon: 'none'
+										});
+									});
+							}
+						}
+					}
+				});
+			}
+		},
+		onItemTap(index, item, type) {
+			if (item) {
+				console.log(index, item);
+				uni.navigateTo({
+					url: '../../newrecordpage/index?item=' + encodeURIComponent(JSON.stringify(item))
+				});
+			}
+		},
+		getUnreimedData() {
+			let that = this;
+			if (this.uniDb) {
+				this.uniDb
+					.collection('records')
+					.where({ reimed: 0 })
+					.get()
+					.then(res => {
+						console.log(res);
+						if (res.success) {
+							that.unreimedItems = res.result.data;
+						} else {
+							uni.showToast({
+								title: '查询未报销失败: ' + res.result.message,
+								icon: 'none'
+							});
+						}
+					})
+					.catch(err => {
+						console.error(err);
+						uni.showToast({
+							title: '查询未报销失败: ' + err.message,
+							icon: 'none'
+						});
+					});
+			}
+		},
+		getReimedData() {
+			let that = this;
+			if (this.uniDb) {
+				this.uniDb
+					.collection('records')
+					.where({ reimed: 1 })
+					.get()
+					.then(res => {
+						console.log(res);
+						if (res.success) {
+							that.reimedItems = res.result.data;
+						} else {
+							uni.showToast({
+								title: '查询已报销失败: ' + res.result.message,
+								icon: 'none'
+							});
+						}
+					})
+					.catch(err => {
+						console.error(err);
+						uni.showToast({
+							title: '查询已报销失败: ' + err.message,
+							icon: 'none'
+						});
+					});
+			}
 		},
 		getData() {
-			var unreimedItems = [
-				{
-					id: '222222-22222-22222-22222',
-					projectName: '延长石油',
-					isReimed: '否',
-					money: 102.3,
-					isElectric: '是',
-					isNeedReplaceTicket: '否',
-					isOpened: false,
-					date: '2019-11-01'
-				},
-				{
-					id: '333333-33333-33333-33333',
-					projectName: '荥阳三调',
-					isReimed: '否',
-					money: 102.3,
-					isElectric: '否',
-					isNeedReplaceTicket: '否',
-					isOpened: false,
-					date: '2019-11-13'
-				},
-				{
-					id: '444444-44444-44444-44444',
-					projectName: '默认',
-					isReimed: '否',
-					money: 102.3,
-					isElectric: '否',
-					isNeedReplaceTicket: '否',
-					isOpened: false,
-					date: '2019-11-05'
-				}
-			];
-			this.unreimedItems = unreimedItems;
-			var reimedItems = [
-				{
-					id: '111111-11111-11111-11111',
-					projectName: '荥阳三调',
-					isReimed: '是',
-					money: 102.3,
-					isElectric: '否',
-					isNeedReplaceTicket: '否',
-					isOpened: false,
-					date: '2019-11-01'
-				}
-			];
-			this.reimedItems = reimedItems;
+			this.getReimedData();
+			this.getUnreimedData();
 		}
 	}
 };
@@ -161,12 +346,6 @@ view {
 	font-size: 14px;
 	line-height: inherit;
 }
-/*  .content {
-    width: 80%;
-    margin: 0 auto;
-    line-height: 58px;
-    text-align: left;
-  } */
 
 uni-section {
 	text-align: left;
@@ -182,13 +361,16 @@ uni-list-item {
 }
 
 uni-swipe-action-item {
-	line-height: 45px;
 	border-bottom-color: #f5f5f5;
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 }
 
-.reimed-view, .unreimed-view, .reimed-list-item, .unreimed-list-item  {
+.reimed-view,
+.unreimed-view,
+.reimed-list,
+.reimed-list-item,
+.unreimed-list-item {
 	width: 100%;
 	text-align: left;
 }
@@ -201,8 +383,21 @@ uni-swipe-action-item {
 	position: relative;
 	background-color: #fff;
 	font-size: 15px;
-	/* border-bottom-color: #F5F5F5; */
-	/* border-bottom-width: 1px; */
-	/* border-bottom-style: solid; */
+}
+
+.sub-cont {
+	flex: 1;
+	height: 25px;
+	line-height: 25px;
+	padding: 0 20px;
+	position: relative;
+	background-color: #fff;
+	font-size: 12px;
+}
+
+.primary-button {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
 }
 </style>

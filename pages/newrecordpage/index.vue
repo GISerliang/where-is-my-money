@@ -1,92 +1,119 @@
 <template>
-	<div class="container">
+	<form class="container" @submit="addRecord">
 		<view class="uni-form-item uni-column">
 			<view class="title">金额</view>
-			<input class="uni-input" type="digit" placeholder="0.00" />
+			<input class="uni-input" type="digit" placeholder="0.00" v-model="money" confirm-type="done" @input="checkMoney" />
 		</view>
-
+		<view class="uni-form-item uni-column">
+			<view class="summary">哪去了</view>
+			<input class="uni-input" type="text" placeholder="哪去了" v-model="summary" confirm-type="done" />
+		</view>
 		<view class="uni-form-item uni-column">
 			<view class="title">项目</view>
-			<picker :value="selectorChecked" :range="selector">
-				<view class="uni-input">{{ selectorChecked }}</view>
+			<picker :value="projectNameIndex" :range="projectName" @change="bindProjectNameChange">
+				<view class="uni-input">{{ projectName[projectNameIndex] }}</view>
 			</picker>
 		</view>
 
 		<view class="uni-form-item uni-column">
 			<view class="title">是否已报销</view>
-			<picker :value="isReimed" :range="ReimedSelector">
-				<view class="uni-input">{{ isReimed }}</view>
+			<picker :value="reimedIndex" :range="ReimedSelector" @change="bindReimedChange">
+				<view class="uni-input">{{ ReimedSelector[reimedIndex] }}</view>
 			</picker>
 		</view>
 
 		<view class="uni-form-item uni-column">
 			<view class="title">是否电子票</view>
-			<picker :value="isElectricTicket" :range="electricTicket">
-				<view class="uni-input">{{ isElectricTicket }}</view>
+			<picker :value="electricTicketIndex" :range="electricTicket" @change="bindElectricChange">
+				<view class="uni-input">{{ electricTicket[electricTicketIndex] }}</view>
 			</picker>
 		</view>
 
 		<view class="uni-form-item uni-column">
 			<view class="title">是否需要替票</view>
-			<picker :value="replaceTicketChecked" :range="replaceTicket">
-				<view class="uni-input">{{ replaceTicketChecked }}</view>
+			<picker :value="replaceTicketIndex" :range="replaceTicket" @change="bindReplaceTicketChange">
+				<view class="uni-input">{{ replaceTicket[replaceTicketIndex] }}</view>
 			</picker>
 		</view>
 
 		<view class="uni-form-item uni-column">
 			<view class="title">发生时间</view>
-			<picker mode="date" :value="dateSelector">
-				<view class="uni-input">{{ dateSelector }}</view>
-			</picker>
+			<picker mode="date" :value="dateSelector" @change="bindDateChange"><uni-dateformat class="uni-input" format="yyyy-MM-dd"></uni-dateformat></picker>
 		</view>
-		
+
 		<view class="uni-form-item uni-column">
-			<button type="primary" class="ok-button">欧了</button>
-			<button type="normal">算了</button>
+			<button type="primary" formType="submit" class="primary-button">欧了</button>
+			<button type="normal" @click="onNavigateBack">算了</button>
 		</view>
-	</div>
+	</form>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
-// import weather from './weather'
+import { mapState, mapMutations } from 'vuex';
+import { uuidv4 } from '@/common/util.js';
 export default {
 	mounted() {
 		this.initPage();
 	},
-	components: {
-		// weather
-	},
-	computed: {
-		// ...mapState('home', ['data']),
-		// ...mapState('weather', ['weather']),
-		content() {
-			// return this.data.hp_content.split('by')[0]
+	components: {},
+	onLoad(option) {
+		if (option.item) {
+			try {
+				const item = JSON.parse(decodeURIComponent(option.item));
+				console.log(item);
+				this.projectNameIndex = this.projectName.indexOf(item.project_name);
+				this.id = item._id;
+				this.electricTicketIndex = item.electric;
+				this.reimedIndex = item.reimed;
+				this.selectorChecked = item.project_name;
+				this.money = item.money;
+				this.replaceTicketIndex = item.need_replace_ticket;
+				this.dateSelector = item.date;
+				this.summary = item.summary;
+			} catch (e) {
+				console.error(e);
+			}
 		}
 	},
+	computed: mapState(['uniDb']),
 	data() {
 		const currentDate = this.getDate({
 			format: true
 		});
 		return {
-			selector: ['默认', '延长石油', '荥阳三调'], // 项目
-			selectorChecked: '默认',
-			replaceTicket: ['是', '否'], // 替票
-			replaceTicketChecked: '否',
-			electricTicket: ['是', '否'], // 电子票
-			isElectricTicket: '否',
-			ReimedSelector: ['是', '否'], // 报销
-			isReimed: '否',
+			projectName: ['默认项目', '延长石油', '荥阳三调'], // 项目
+			projectNameIndex: 0,
+			replaceTicket: ['否', '是'], // 替票
+			replaceTicketIndex: 0,
+			electricTicket: ['否', '是'], // 电子票
+			electricTicketIndex: 0,
+			ReimedSelector: ['否', '是'], // 报销
+			reimedIndex: 0,
 			dateSelector: currentDate, // 日期
-			id: '',
-			money: 0.0
+			id: null,
+			money: null,
+			summary: null
 		};
 	},
 	methods: {
-		// ...mapActions('home', ['getNewIds', 'getHomeData']),
-		async initPage() {
-			// await this.getNewIds()
-			// await this.getHomeData()
+		async initPage() {},
+		checkMoney(e) {
+			let that = this;
+			let money = e.detail.value;
+			let maxLength = money.indexOf('.');
+			if (money.indexOf('.') < 0 && money != '') {
+				money = parseFloat(money);
+			} else if (money.indexOf('.') == 0) {
+				//'首位小数点情况'
+				money = money.replace(/[^$#$]/g, '0.');
+				money = money.replace(/\.{2,}/g, '.');
+			} else if (!/^(\d?)+(\.\d{0,2})?$/.test(money)) {
+				//去掉最后一位
+				money = money.substring(0, money.length - 1);
+			}
+			that.$nextTick(function() {
+				that.money = money;
+			});
 		},
 		getDate(type) {
 			const date = new Date();
@@ -102,6 +129,99 @@ export default {
 			month = month > 9 ? month : '0' + month;
 			day = day > 9 ? day : '0' + day;
 			return `${year}-${month}-${day}`;
+		},
+		bindProjectNameChange(e) {
+			this.projectNameIndex = e.target.value;
+		},
+		bindReimedChange(e) {
+			this.reimedIndex = e.target.value;
+		},
+		bindElectricChange(e) {
+			this.electricTicketIndex = e.target.value;
+		},
+		bindReplaceTicketChange(e) {
+			this.replaceTicketIndex = e.target.value;
+		},
+		bindDateChange(e) {
+			this.dateSelector = e.target.value;
+		},
+		onNavigateBack() {
+			uni.navigateBack({
+				delta: 1
+			});
+		},
+		addRecord(e) {
+			if (this.money <= 0.0) {
+				uni.showToast({
+					title: '保存记录失败: 金额不能小于等于0',
+					icon: 'none'
+				});
+				return;
+			}
+
+			const record = {
+				project_name: this.projectName[this.projectNameIndex],
+				reimed: parseInt(this.reimedIndex),
+				money: parseFloat(this.money),
+				electric: parseInt(this.electricTicketIndex),
+				need_replace_ticket: parseInt(this.replaceTicketIndex),
+				date: new Date(this.dateSelector),
+				summary: this.summary
+			};
+
+			let that = this;
+			if (this.uniDb) {
+				if (this.id) {
+					that.uniDb
+						.collection('records')
+						.doc(this.id)
+						.update(record)
+						.then(res => {
+							if (res.success) {
+								uni.navigateBack({
+									delta: 1
+								});
+								uni.$emit('ADD_RECORD_SUCCESS', record);
+							} else {
+								uni.showToast({
+									title: '保存记录失败: ' + res.result.message,
+									icon: 'none'
+								});
+							}
+						})
+						.catch(err => {
+							console.error(err);
+							uni.showToast({
+								title: '保存记录失败: ' + err.message,
+								icon: 'none'
+							});
+						});
+				} else {
+					this.uniDb
+						.collection('records')
+						.add(record)
+						.then(res => {
+							if (res.success) {
+								uni.navigateBack({
+									delta: 1
+								});
+								uni.$emit('ADD_RECORD_SUCCESS', record);
+							} else {
+								uni.showToast({
+									title: '保存记录失败: ' + res.result.message,
+									icon: 'none'
+								});
+							}
+						})
+						.catch(err => {
+							console.error(err);
+							uni.showToast({
+								title: '保存记录失败: ' + err.message,
+								icon: 'none'
+							});
+						});
+				}
+			}
 		}
 	}
 };
@@ -117,6 +237,10 @@ export default {
 	padding: 5px 14px;
 }
 
+.uni-form-item .summary {
+	padding: 5px 14px;
+}
+
 .uni-input {
 	height: 28px;
 	padding: 8px 14px;
@@ -124,9 +248,5 @@ export default {
 	font-size: 15px;
 	background: #fff;
 	flex: 1;
-}
-
-.ok-button {
-	background-color: #6190e8;
 }
 </style>

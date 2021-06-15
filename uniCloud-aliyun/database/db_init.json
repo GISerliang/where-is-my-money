@@ -1,0 +1,134 @@
+{
+    "records": {
+        "data": [],
+        "index": [
+            {
+                "IndexName": "records_idx",
+                "MgoKeySchema": {
+                    "MgoIndexKeys": [
+                        {
+                            "Name": "project_name",
+                            "Direction": "1"
+                        },
+                        {
+                            "Name": "summary",
+                            "Direction": "1"
+                        },
+                        {
+                            "Name": "money",
+                            "Direction": "1"
+                        },
+                        {
+                            "Name": "reimed",
+                            "Direction": "1"
+                        },
+                        {
+                            "Name": "electric",
+                            "Direction": "1"
+                        },
+                        {
+                            "Name": "need_replace_ticket",
+                            "Direction": "1"
+                        },
+                        {
+                            "Name": "date",
+                            "Direction": "1"
+                        }
+                    ],
+                    "MgoIsUnique": false
+                }
+            }
+        ],
+        "schema": {
+            "bsonType": "object",
+            "permission": {
+                "create": true,
+                "delete": true,
+                "read": true,
+                "update": true
+            },
+            "properties": {
+                "_id": {
+                    "description": "ID，系统自动生成"
+                },
+                "date": {
+                    "bsonType": "date",
+                    "description": "费用产生日期",
+                    "title": "发生时间"
+                },
+                "electric": {
+                    "bsonType": "int",
+                    "defaultValue": 0,
+                    "description": "是否是电子发票, 0: 否, 1: 是",
+                    "enum": [
+                        {
+                            "text": "否",
+                            "value": 0
+                        },
+                        {
+                            "text": "是",
+                            "value": 1
+                        }
+                    ],
+                    "maximum": 1,
+                    "minimum": 0,
+                    "title": "是否电子票"
+                },
+                "money": {
+                    "bsonType": "double",
+                    "description": "金额",
+                    "title": "金额"
+                },
+                "need_replace_ticket": {
+                    "bsonType": "int",
+                    "defaultValue": 0,
+                    "description": "是否需要替票, 0: 否, 1: 是",
+                    "enum": [
+                        {
+                            "text": "否",
+                            "value": 0
+                        },
+                        {
+                            "text": "是",
+                            "value": 1
+                        }
+                    ],
+                    "maximum": 1,
+                    "minimum": 0,
+                    "title": "是否需要替票"
+                },
+                "project_name": {
+                    "bsonType": "string",
+                    "description": "项目名称",
+                    "title": "项目",
+                    "trim": "both"
+                },
+                "reimed": {
+                    "bsonType": "int",
+                    "defaultValue": 0,
+                    "description": "是否已报销, 0: 未报销, 1: 已报销",
+                    "enum": [
+                        {
+                            "text": "未报销",
+                            "value": 0
+                        },
+                        {
+                            "text": "已报销",
+                            "value": 1
+                        }
+                    ],
+                    "maximum": 1,
+                    "minimum": 0,
+                    "title": "是否已报销"
+                },
+                "summary": {
+                    "bsonType": "string",
+                    "description": "摘要",
+                    "title": "摘要",
+                    "trim": "both"
+                }
+            },
+            "required": []
+        }
+    }
+}
