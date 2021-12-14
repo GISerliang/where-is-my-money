@@ -1,0 +1,27 @@
+{
+	"bsonType": "object",
+	"required": [],
+	"permission": {
+		"read": false,
+		"create": true,
+		"update": true,
+		"delete": false
+	},
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+		"type": {
+			"description": "反馈类型"
+		},
+		"content": {
+			"description": "反馈内容"
+		},
+		"images": {
+			"description": "反馈截图"
+		},
+		"user_id": {
+			"description": "用户ID"
+		}
+	}
+}

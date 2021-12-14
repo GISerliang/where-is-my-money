@@ -1,8 +1,8 @@
 <template>
   <view style="background-color: #fff; width: 100%; height: 100%;">
     <view style="width: 100%; height: 60px; text-align: center; padding-top: 80rpx;">
-      <image style="width: 100px; height: 36px; background-color: #fff;" :mode="aspectFit" src="../../static/about.png"
-                            error="小本本"></image>
+      <u--image width="100px" height="36px" style="width: 100px; height: 36px; background-color: #fff;" :mode="aspectFit" src="/static/about.png"
+                            error="小本本"></u--image>
     </view>
     <uni-card>
     <view style="text-indent: 30px; ">
@@ -28,6 +28,8 @@
   }
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+/deep/ .u-image {
+  display: block !important;
+}
 </style>

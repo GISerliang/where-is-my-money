@@ -1,32 +1,36 @@
 <template>
   <view class="container">
     <view slot="contentSection">
-      <view style="text-align: left;background-color: #fff;padding-bottom: 10rpx; padding-top: 10rpx; display: flex; align-items: center;">
+      <view style="text-align: left;background-color: #fff;padding-bottom: 10rpx; padding-top: 10rpx; display: flex; align-items: center;" class="user-container">
         <view @click="updateUserProfile" style="display: flex; align-items: center; margin-right: 10px;">
-          <image
-            :src="userInfo.avatarUrl"
-            mode="widthFix"
-            style="width:80px;height:80px;border-radius: 40px;background-color: #8F8F94; margin-left: 10rpx; border: #fff 1px solid;"
-          ></image>
+
+            <u--image
+              :src="(userInfo.avatarUrl && userInfo.avatarUrl !== '') ? userInfo.avatarUrl : '/static/user.png'"
+              mode="widthFix"
+              shape="circle"
+              width="80px"
+              height="80px"
+              style="width:80px;height:80px; border-radius: 40px;background-color: #8F8F94; margin-left: 10rpx; border: #fff 1px solid;"
+            ></u--image>
           <view style="padding-left: 10rpx;">{{ userInfo.nickName }}</view>
         </view>
-        <button :type="userInfo.nickName && userInfo.nickName != '微信用户' ? 'warn' : 'primary'" @click="userClicked" size="mini" style="margin-right: 10px;">
+        <u-button :type="userInfo.nickName && userInfo.nickName != '微信用户' ? 'error' : 'primary'" @click="userClicked" size="mini" style="margin-right: 10px;">
           {{ userInfo.nickName && userInfo.nickName != '微信用户' ? '退出登录' : '点击登录' }}
-        </button>
+        </u-button>
         <!-- <view><text class="user-tag" style="background-color: #3aa64e;">同步微信信息</text></view> -->
       </view>
       <view style="width: 100%;background:#F2F2F2,display:''; margin-top: 10rpx;">
-<!--        <u-grid :border="true" @click="gridClicked">
+        <!--        <u-grid :border="true" @click="gridClicked">
           <u-grid-item v-for="(baseListItem, baseListIndex) in baseList" :key="baseListIndex">
             <u-icon :customStyle="{ paddingTop: 20 + 'rpx' }" :name="baseListItem.name" :size="22"></u-icon>
             <text class="grid-text">{{ baseListItem.title }}</text>
           </u-grid-item>
         </u-grid> -->
-       <uni-list>
-          <uni-list-item title="项目列表" link @click="projectListClicked"></uni-list-item>
-          <uni-list-item title="关于" link to="/pages/about/index"></uni-list-item>
-        </uni-list>
-        <u-button openType="feedback">意见反馈</u-button>
+        <u-cell-group>
+          <u-cell title="项目列表" @click="projectListClicked" :isLink="true" arrow-direction="right"></u-cell>
+          <u-cell title="关于" url="/pages/about/index" :isLink="true" arrow-direction="right"></u-cell>
+          <u-cell title="意见反馈" @click="feedbackClicked" :isLink="true" arrow-direction="right"></u-cell>
+        </u-cell-group>
       </view>
     </view>
   </view>
@@ -64,7 +68,7 @@ export default {
   methods: {
     ...mapMutations(['setUserInfo']),
     gridClicked(name) {
-      console.log(name)
+      console.log(name);
     },
     async initPage() {},
     updateUserProfile() {
@@ -108,13 +112,37 @@ export default {
           icon: 'none'
         });
       }
+    },
+    feedbackClicked() {
+      if (this.userInfo && this.userInfo._id) {
+        uni.navigateTo({
+          url: '../../feedback/index?userId=' + this.userInfo._id
+        });
+      } else {
+        uni.showToast({
+          title: '请您先登录小程序',
+          icon: 'none'
+        });
+      }
     }
   }
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
   height: 100% !important;
+}
+
+.user-container /deep/ .u-button {
+  max-width: 120px !important;
+}
+
+.user-container /deep/ .u-image {
+  margin-left: 10rpx;
+}
+
+/deep/ .u-cell-group {
+  background-color: #fff;
 }
 </style>

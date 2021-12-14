@@ -225,7 +225,7 @@ export default {
     projectConfirm(e) {
       console.log(e);
       this.projectNameIndex = e.indexs && e.indexs[0] > -1 ? e.indexs[0] : -1;
-      this.currentProjectName = e.value && e.value[0] ? e.values[0] : '选择项目';
+      this.currentProjectName = e.value && e.value[0] ? e.value[0] : '选择项目';
       this.projectShow = false;
     },
     replaceTicketClose() {
@@ -234,7 +234,7 @@ export default {
     replaceTicketChange(e) {},
     replaceTicketConfirm(e) {
       this.replaceTicketIndex = e.indexs && e.indexs[0] > -1 ? e.indexs[0] : -1;
-      this.currentReplaceTicket = e.value && e.value[0] ? e.values[0] : '否';
+      this.currentReplaceTicket = e.value && e.value[0] ? e.value[0] : '否';
       this.replaceTicketShow = false;
     },
     electricTicketClose() {
@@ -243,7 +243,7 @@ export default {
     electricTicketChange(e) {},
     electricTicketConfirm(e) {
       this.electricTicketIndex = e.indexs && e.indexs[0] > -1 ? e.indexs[0] : -1;
-      this.currentElectricTicket = e.value && e.value[0] ? e.values[0] : '否';
+      this.currentElectricTicket = e.value && e.value[0] ? e.value[0] : '否';
       this.electricTicketShow = false;
     },
     reimedClose() {
@@ -252,7 +252,7 @@ export default {
     reimedChange(e) {},
     reimedConfirm(e) {
       this.reimedIndex = e.indexs && e.indexs[0] > -1 ? e.indexs[0] : -1;
-      this.currentReimed = e.value && e.value[0] ? e.values[0] : '否';
+      this.currentReimed = e.value && e.value[0] ? e.value[0] : '否';
       this.reimedShow = false;
     },
     dateClose() {

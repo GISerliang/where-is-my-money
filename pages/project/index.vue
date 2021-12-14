@@ -1,7 +1,7 @@
 <template>
   <view class="u-page">
     <view class="u-block">
-      <text class="u-block__title">项目标签</text>
+      <uni-section title="项目标签" type="line"></uni-section>
       <view class="u-block__content">
         <view class="u-page__tag-item" v-for="(project, index) in projectList" :key="index">
           <u-tag :name="project._id" :text="project.project_name" plain plainFill closable @close="removeProject"></u-tag>
@@ -128,7 +128,7 @@ export default {
     popupConfirm(value) {
       let that = this;
       value = value.trim();
-      if (value && value !== '' && this.userId) {
+      if (value && value !== '' && this.userId && this.userId !== '') {
         let is_repeat = false;
         for (let i = 0; i < that.projectList.length; i++) {
           if (that.projectList[i].project_name === value) {
@@ -172,13 +172,14 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.u-block {
-  flex: 1;
-  margin-bottom: 23px;
+<style lang="scss" scoped>
+/deep/ .u-block {
+  flex: 1 !important;
+  margin-bottom: 10px !important;
 
   &__content {
     @include flex(column);
+    padding: 0 10px 5px 10px;
   }
 
   &__title {
@@ -190,20 +191,20 @@ export default {
 }
 </style>
 
-<style>
+<style scoped>
 .u-page {
-  padding: 15px 15px 40px 15px;
+  /* padding: 0 15px 40px 15px; */
 }
-.u-page__tag-item {
+/deep/ .u-page__tag-item {
   margin-right: 20rpx;
 }
-.u-block__content {
+/deep/ .u-block__content {
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
 }
 
-.project-add-tag .u-tag {
+/deep/ .project-add-tag .u-tag {
   border-style: dashed !important;
   margin-top: 10px !important;
 }
