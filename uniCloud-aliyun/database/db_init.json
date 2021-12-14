@@ -37,6 +37,18 @@
                     ],
                     "MgoIsUnique": false
                 }
+            },
+            {
+                "IndexName": "records_user_id",
+                "MgoKeySchema": {
+                    "MgoIndexKeys": [
+                        {
+                            "Name": "user_id",
+                            "Direction": "1"
+                        }
+                    ],
+                    "MgoIsUnique": false
+                }
             }
         ],
         "schema": {
@@ -126,6 +138,10 @@
                     "description": "摘要",
                     "title": "摘要",
                     "trim": "both"
+                },
+                "user_id": {
+                    "bsonType": "string",
+                    "description": "用户ID"
                 }
             },
             "required": []

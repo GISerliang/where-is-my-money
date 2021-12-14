@@ -1,66 +1,120 @@
 <template>
-  <div class="container">
-  我的天
-    // <image class="cover" :src="data.hp_img_url" mode="widthFix" />
-    // <view class="cover-author">
-    //   <text class="gray">{{data.hp_author}}</text>
-    // </view>
-    // <view class="content">
-    //   <text>{{content}}</text>
-    // </view>
-    // <view class="content-author">
-    //   <text class="gray">{{data.text_authors}}</text>
-    // </view>
-    // <weather :weather="weather" v-if="weather.status === 'ok'"></weather>
-  </div>
+  <view class="container">
+    <view slot="contentSection">
+      <view style="text-align: left;background-color: #fff;padding-bottom: 10rpx; padding-top: 10rpx; display: flex; align-items: center;">
+        <view @click="updateUserProfile" style="display: flex; align-items: center; margin-right: 10px;">
+          <image
+            :src="userInfo.avatarUrl"
+            mode="widthFix"
+            style="width:80px;height:80px;border-radius: 40px;background-color: #8F8F94; margin-left: 10rpx; border: #fff 1px solid;"
+          ></image>
+          <view style="padding-left: 10rpx;">{{ userInfo.nickName }}</view>
+        </view>
+        <button :type="userInfo.nickName && userInfo.nickName != '微信用户' ? 'warn' : 'primary'" @click="userClicked" size="mini" style="margin-right: 10px;">
+          {{ userInfo.nickName && userInfo.nickName != '微信用户' ? '退出登录' : '点击登录' }}
+        </button>
+        <!-- <view><text class="user-tag" style="background-color: #3aa64e;">同步微信信息</text></view> -->
+      </view>
+      <view style="width: 100%;background:#F2F2F2,display:''; margin-top: 10rpx;">
+<!--        <u-grid :border="true" @click="gridClicked">
+          <u-grid-item v-for="(baseListItem, baseListIndex) in baseList" :key="baseListIndex">
+            <u-icon :customStyle="{ paddingTop: 20 + 'rpx' }" :name="baseListItem.name" :size="22"></u-icon>
+            <text class="grid-text">{{ baseListItem.title }}</text>
+          </u-grid-item>
+        </u-grid> -->
+       <uni-list>
+          <uni-list-item title="项目列表" link @click="projectListClicked"></uni-list-item>
+          <uni-list-item title="关于" link to="/pages/about/index"></uni-list-item>
+        </uni-list>
+        <u-button openType="feedback">意见反馈</u-button>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-// import weather from './weather'
+import { mapState, mapMutations } from 'vuex';
+import loginUser from '../../../common/currentUser.js';
+import cloudApi from '../../../common/cloudApi.js';
+
 export default {
   mounted() {
-    this.initPage()
+    this.initPage();
   },
   components: {
     // weather
   },
+  data() {
+    return {
+      baseList: [
+        {
+          name: 'tags',
+          title: '项目列表'
+        },
+        {
+          name: 'info-circle',
+          title: '关于'
+        }
+      ]
+    };
+  },
   computed: {
-    // ...mapState('home', ['data']),
-    // ...mapState('weather', ['weather']),
-    content() {
-      // return this.data.hp_content.split('by')[0]
-    }
+    ...mapState(['uniDb', 'userInfo'])
   },
   methods: {
-    // ...mapActions('home', ['getNewIds', 'getHomeData']),
-    async initPage() {
-      // await this.getNewIds()
-      // await this.getHomeData()
+    ...mapMutations(['setUserInfo']),
+    gridClicked(name) {
+      console.log(name)
+    },
+    async initPage() {},
+    updateUserProfile() {
+      let that = this;
+      uni.getUserProfile({
+        desc: '用于完善会员资料',
+        success: res => {
+          that.userInfo = Object.assign(that.userInfo, res.userInfo);
+          loginUser.updateUserInfo(that.userInfo);
+          that.setUserInfo(that.userInfo);
+        }
+      });
+    },
+    async userClicked() {
+      if (this.userInfo && this.userInfo.nickName && this.userInfo.nickName != '微信用户') {
+        // 退出登录
+        uni.setStorageSync('is_login', false);
+        this.setUserInfo({
+          nickName: '微信用户',
+          avatarUrl: '',
+          gender: 0,
+          country: '',
+          province: '',
+          city: ''
+        });
+      } else {
+        let userData = await loginUser.login();
+        this.userInfo = Object.assign(this.userInfo, userData);
+        this.updateUserProfile();
+        uni.setStorageSync('is_login', true);
+      }
+    },
+    projectListClicked() {
+      if (this.userInfo && this.userInfo._id) {
+        uni.navigateTo({
+          url: '../../project/index?userId=' + this.userInfo._id
+        });
+      } else {
+        uni.showToast({
+          title: '请您先登录小程序',
+          icon: 'none'
+        });
+      }
     }
   }
-}
+};
 </script>
 
 <style scoped>
-  .cover {
-    width: 100%;
-  }
-  .cover-author {
-    width: 100%;
-    height: 100rpx;
-    line-height: 100rpx;
-    margin-bottom: 30rpx;
-  }
-  .content {
-    width: 80%;
-    margin: 0 auto;
-    line-height: 58rpx;
-    text-align: left;
-  }
-  .content-author {
-    height: 100rpx;
-    line-height: 100rpx;
-    font-size: 20rpx;
-  }
+.container {
+  height: 100% !important;
+}
 </style>

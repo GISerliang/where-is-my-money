@@ -239,7 +239,8 @@ localdata:[
 |ontap|Boolean|true|否|是否监听@tap@cilck事件，禁用后不会触发组件点击事件|
 |ontouch|Boolean|false|否|（仅uCharts）是否监听@touchstart@touchmove@touchend事件（赋值为true时，非PC端在图表区域内无法拖动页面滚动）|
 |onmouse|Boolean|true|否|是否监听@mousedown@mousemove@mouseup事件，禁用后鼠标经过图表上方不会显示tooltip|
-|`onmovetip`|Boolean|false|否|（仅uCharts）是否开启跟手显示tooltip功能（前提条件，1、需要开启touch功能，即:ontouch="true"；2、并且opts.enableScroll=false即关闭图表的滚动条功能）（建议微信小程序开启canvas2d功能，否则原生canvas组件会很卡）|
+|on movetip|Boolean|false|否|（仅uCharts）是否开启跟手显示tooltip功能（前提条件，1、需要开启touch功能，即:ontouch="true"；2、并且opts.enableScroll=false即关闭图表的滚动条功能）（建议微信小程序开启canvas2d功能，否则原生canvas组件会很卡）|
+|tapLegend|Boolean|true|否|（仅uCharts）是否开启图例点击交互事件 |
 
 ## 组件事件及方法
 

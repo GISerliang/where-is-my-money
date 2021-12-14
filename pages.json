@@ -27,8 +27,24 @@
 			"style": {
 				"navigationBarTitleText": "记一下"
 			}
-		}
-	],
+		},
+    {
+            "path" : "pages/about/index",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "关于",
+                "enablePullDownRefresh": false
+            } 
+        },
+        {
+          "path" : "pages/project/index",
+          "style" :                                                                                    
+          {
+              "navigationBarTitleText": "项目列表",
+              "enablePullDownRefresh": false
+          } 
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "钱去哪了",

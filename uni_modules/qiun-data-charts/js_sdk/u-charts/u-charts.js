@@ -19,7 +19,7 @@
 'use strict';
 
 var config = {
-  version: 'v2.2.1-20210603',
+  version: 'v2.3.0-20210612',
   yAxisWidth: 15,
   yAxisSplit: 5,
   xAxisHeight: 22,
@@ -471,7 +471,7 @@ function getDataRange(minData, maxData) {
 function measureText(text, fontSize, context) {
   var width = 0;
   text = String(text);
-  // #ifdef MP-ALIPAY || MP-BAIDU
+  // #ifdef MP-ALIPAY || MP-BAIDU || APP-NVUE
   context = false;
   // #endif
   if (context !== false && context !== undefined && context.setFontSize && context.measureText) {
@@ -1822,8 +1822,8 @@ function getYAxisTextList(series, opts, config, stack, yData) {
     maxData += rangeSpan;
   }
   var dataRange = getDataRange(minData, maxData);
-  var minRange = yData.min === undefined ? dataRange.minRange : yData.min;
-  var maxRange = yData.max === undefined ? dataRange.maxRange : yData.max;
+  var minRange = yData.min === undefined || yData.min === null ? dataRange.minRange : yData.min;
+  var maxRange = yData.max === undefined || yData.min === null ? dataRange.maxRange : yData.max;
   var range = [];
   var eachRange = (maxRange - minRange) / opts.yAxis.splitNumber;
   for (var i = 0; i <= opts.yAxis.splitNumber; i++) {
@@ -6304,6 +6304,10 @@ var uCharts = function uCharts(opts) {
       return this.textAlign = e;
     }
     this.context.draw = function() {}
+  }
+  //兼容NVUEsetLineDash
+  if(!this.context.setLineDash){
+    this.context.setLineDash = function(e) {}
   }
   opts.chartData = {};
   this.uevent = new uChartsEvent();

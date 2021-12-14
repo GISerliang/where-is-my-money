@@ -1,8 +1,8 @@
 {
   "id": "qiun-data-charts",
   "displayName": "秋云 ucharts echarts 高性能跨全端图表组件",
-  "version": "2.2.1-20210603",
-  "description": "uCharts v2.2上线，新增条状图！全新官方图表组件，支持H5及APP用ECharts渲染图表，uniapp可视化首选组件",
+  "version": "2.3.0-20210612",
+  "description": "uCharts v2.3上线，支持nvue！全新官方图表组件，支持H5及APP用ECharts渲染图表，uniapp可视化首选组件",
   "keywords": [
     "ucharts",
     "echarts",
@@ -48,7 +48,7 @@
       "client": {
         "App": {
           "app-vue": "y",
-          "app-nvue": "n"
+          "app-nvue": "y"
         },
         "H5-mobile": {
           "Safari": "y",

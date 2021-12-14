@@ -1,3 +1,8 @@
+## 2.3.0-20210612（2021-06-12）
+- uCharts.js 【重要】uCharts增加nvue兼容，可在nvue项目中使用gcanvas组件渲染uCharts，[详见码云uCharts-demo-nvue](https://gitee.com/uCharts/uCharts)
+- 秋云图表组件 增加tapLegend属性，是否开启图例点击交互事件
+- 秋云图表组件 getIndex事件中增加返回uCharts实例中的opts参数，以便在页面中调用参数
+- 示例项目 pages/other/other.vue增加app端自定义tooltip的方法，详见showOptsTooltip方法
 ## 2.2.1-20210603（2021-06-03）
 - uCharts.js 修复饼图、圆环图、玫瑰图，当起始角度不为0时，tooltip位置不准确的bug
 - uCharts.js 增加温度计式柱状图开启顶部半圆形的配置
