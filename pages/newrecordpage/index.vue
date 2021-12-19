@@ -29,7 +29,7 @@
     <view class="uni-form-item uni-column">
       <view class="title">是否电子票</view>
       <u-picker
-        :show="electricTicketSow"
+        :show="electricTicketShow"
         :columns="[electricTicket]"
         closeOnClickOverlay
         @close="electricTicketClose"
