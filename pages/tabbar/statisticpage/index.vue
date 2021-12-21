@@ -130,6 +130,7 @@ export default {
       this.updateDateCharts();
       setTimeout(() => {
         uni.hideNavigationBarLoading();
+        uni.stopPullDownRefresh();
       }, 1000);
     } else {
       uni.stopPullDownRefresh();

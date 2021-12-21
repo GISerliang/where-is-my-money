@@ -97,6 +97,7 @@ export default {
       this.getData();
       setTimeout(() => {
         uni.hideNavigationBarLoading();
+        uni.stopPullDownRefresh();
       }, 1000);
     } else {
       uni.stopPullDownRefresh();

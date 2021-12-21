@@ -1,7 +1,7 @@
 {
-    "name" : "where-is-my-money",
+    "name" : "钱钱去哪里了",
     "appid" : "__UNI__467FF2D",
-    "description" : "记录出差支出，及时提醒报销",
+    "description" : "记录出差花费及是否需要替票 统计报销金额、报销时长生成图表提醒报销周期",
     "versionName" : "1.0.0",
     "versionCode" : "100",
     "transformPx" : false,
@@ -49,13 +49,16 @@
     /* 快应用特有相关 */
     "mp-weixin" : {
         /* 小程序特有相关 */
-        "appid" : "wxbd6eee01873502f4",
+        "appid" : "wxc07ba4f875e02ac1",
         "setting" : {
             "urlCheck" : true,
             "es6" : true,
             "postcss" : true,
             "minified" : true
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "uniStatistics" : {
+            "enable" : true
+        }
     }
 }
