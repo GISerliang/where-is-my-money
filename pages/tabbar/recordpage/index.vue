@@ -89,6 +89,24 @@ export default {
       that.getData();
     });
   },
+  onPullDownRefresh() {
+    console.log('refresh');
+    let that = this;
+    if (that.$store.state.userInfo && that.$store.state.userInfo._id) {
+      uni.showNavigationBarLoading();
+      this.getData();
+      setTimeout(() => {
+        uni.hideNavigationBarLoading();
+      }, 1000);
+    } else {
+      uni.stopPullDownRefresh();
+      uni.showToast({
+        title: '请您先登录小程序',
+        icon: 'none'
+      });
+      return;
+    }
+  },
   mounted() {},
   computed: {
     ...mapState(['uniDb'])

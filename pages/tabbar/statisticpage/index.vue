@@ -121,9 +121,37 @@ export default {
       return item.data + '元';
     };
   },
+  onPullDownRefresh() {
+    console.log('refresh');
+    let that = this;
+    if (that.$store.state.userInfo && that.$store.state.userInfo._id) {
+      uni.showNavigationBarLoading();
+      this.updateProjectCharts();
+      this.updateDateCharts();
+      setTimeout(() => {
+        uni.hideNavigationBarLoading();
+      }, 1000);
+    } else {
+      uni.stopPullDownRefresh();
+      uni.showToast({
+        title: '请您先登录小程序',
+        icon: 'none'
+      });
+      return;
+    }
+  },
   onShow: function() {
-    this.updateProjectCharts();
-    this.updateDateCharts();
+    let that = this;
+    if (that.$store.state.userInfo && that.$store.state.userInfo._id) {
+      this.updateProjectCharts();
+      this.updateDateCharts();
+    } else {
+      uni.showToast({
+        title: '请您先登录小程序',
+        icon: 'none'
+      });
+      return;
+    }
   },
   mounted() {},
   data() {

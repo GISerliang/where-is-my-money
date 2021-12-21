@@ -4,6 +4,7 @@
     "path": "pages/tabbar/recordpage/index",
     "style": {
       "navigationBarTitleText": "小本本",
+      "enablePullDownRefresh": true,
       "app-plus": {
         "bounce": "none"
       }
@@ -11,7 +12,8 @@
   }, {
     "path": "pages/tabbar/statisticpage/index",
     "style": {
-      "navigationBarTitleText": "贡献值"
+      "navigationBarTitleText": "贡献值",
+      "enablePullDownRefresh": true
     }
   }, {
     "path": "pages/tabbar/ownpage/index",
