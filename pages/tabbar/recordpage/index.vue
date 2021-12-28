@@ -87,11 +87,11 @@ export default {
       console.log('login changed');
       that.getData();
     });
-
-    this.getData();
     uni.$on('ADD_RECORD_SUCCESS', function(record) {
       that.getData();
     });
+
+    this.getData();
   },
   onPullDownRefresh() {
     console.log('refresh');
