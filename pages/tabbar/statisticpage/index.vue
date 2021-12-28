@@ -103,6 +103,21 @@ export default {
     uni.$on('LOGIN_CHANGED', () => {
       console.log('login changed');
       this.userInfo = this.$store.state.userInfo;
+      that.projectChartData = {
+        categories: [],
+        series: []
+      }
+      that.projectChartRoseData = {
+        series: []
+      }
+      that.projectChartCommonData = {
+        categories: [],
+        series: []
+      }
+      that.dateChartData = {
+        categories: [],
+        series: []
+      }
     });
     uCharts.formatter[this.projectTooltipFormatter] = function(item, category, index, opts) {
       if (category) {

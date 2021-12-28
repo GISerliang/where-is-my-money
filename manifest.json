@@ -2,7 +2,7 @@
     "name" : "钱钱去哪里了",
     "appid" : "__UNI__467FF2D",
     "description" : "记录出差花费及是否需要替票 统计报销金额、报销时长生成图表提醒报销周期",
-    "versionName" : "1.0.0",
+    "versionName" : "1.0.1",
     "versionCode" : "100",
     "transformPx" : false,
     "app-plus" : {

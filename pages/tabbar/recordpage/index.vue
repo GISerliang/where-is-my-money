@@ -62,8 +62,12 @@ export default {
     let that = this;
 
     this.userInfo = await loginUser.login();
-
-    const is_login = uni.getStorageSync('is_login');
+    let is_login = false;
+    try {
+      is_login = uni.getStorageSync('is_login');
+    } catch (e) {
+      is_login = false;
+    }
     console.log('is_login', is_login);
     if (!is_login) {
       this.userInfo = {
