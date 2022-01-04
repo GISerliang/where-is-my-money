@@ -102,22 +102,22 @@ export default {
 
     uni.$on('LOGIN_CHANGED', () => {
       console.log('login changed');
-      this.userInfo = this.$store.state.userInfo;
+      that.userInfo = that.$store.state.userInfo;
       that.projectChartData = {
         categories: [],
         series: []
-      }
+      };
       that.projectChartRoseData = {
         series: []
-      }
+      };
       that.projectChartCommonData = {
         categories: [],
         series: []
-      }
+      };
       that.dateChartData = {
         categories: [],
         series: []
-      }
+      };
     });
     uCharts.formatter[this.projectTooltipFormatter] = function(item, category, index, opts) {
       if (category) {
@@ -349,7 +349,7 @@ export default {
             user_id: this.$store.state.userInfo._id
           })
           .field('project_name, reimed, money, date')
-          .groupBy(this.dateChartCurrent === 0 ? "dateToString(date,'%Y年') as text, reimed" : "dateToString(date,'%Y年%m月') as text, reimed")
+          .groupBy(this.dateChartCurrent === 0 ? "dateToString(date,'%Y年', 'Asia/Shanghai') as text, reimed" : "dateToString(date,'%Y年%m月', 'Asia/Shanghai') as text, reimed")
           .groupField('sum(money) as total_money')
           .orderBy('text')
           .get()
