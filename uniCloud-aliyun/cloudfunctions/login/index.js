@@ -23,7 +23,7 @@ exports.main = async (event, context) => {
   )
 
   const openid = res.data.openid;
-  
+
   if (!openid) {
     return {
       nickName: "微信用户",
@@ -51,7 +51,7 @@ exports.main = async (event, context) => {
       province: "",
       city: ""
     }
-    //不要泄露用户的openid
+    
     await db.collection("users").add({
       openid: openid,
       ...userData

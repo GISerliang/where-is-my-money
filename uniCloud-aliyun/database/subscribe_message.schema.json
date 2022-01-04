@@ -1,0 +1,22 @@
+// 文档教程: https://uniapp.dcloud.net.cn/uniCloud/schema
+{
+	"bsonType": "object",
+	"required": [],
+	"permission": {
+		"read": true,
+		"create": true,
+		"update": true,
+		"delete": true
+	},
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+    "user_id": {
+      "description": "用户ID"
+    },
+    "templeteid_list": {
+      "description": "模板ID及订阅情况集合"
+    }
+	}
+}

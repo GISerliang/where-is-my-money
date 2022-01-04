@@ -3,15 +3,14 @@
     <view slot="contentSection">
       <view style="text-align: left;background-color: #fff;padding-bottom: 10rpx; padding-top: 10rpx; display: flex; align-items: center;" class="user-container">
         <view @click="updateUserProfile" style="display: flex; align-items: center; margin-right: 10px;">
-
-            <u--image
-              :src="(userInfo.avatarUrl && userInfo.avatarUrl !== '') ? userInfo.avatarUrl : '/static/user.png'"
-              mode="widthFix"
-              shape="circle"
-              width="80px"
-              height="80px"
-              style="width:80px;height:80px; border-radius: 40px;background-color: #8F8F94; margin-left: 10rpx; border: #fff 1px solid;"
-            ></u--image>
+          <u--image
+            :src="userInfo.avatarUrl && userInfo.avatarUrl !== '' ? userInfo.avatarUrl : '/static/user.png'"
+            mode="widthFix"
+            shape="circle"
+            width="80px"
+            height="80px"
+            style="width:80px;height:80px; border-radius: 40px;background-color: #8F8F94; margin-left: 10rpx; border: #fff 1px solid;"
+          ></u--image>
           <view style="padding-left: 10rpx;">{{ userInfo.nickName }}</view>
         </view>
         <u-button :type="userInfo.nickName && userInfo.nickName != '微信用户' ? 'error' : 'primary'" @click="userClicked" size="mini" style="margin-right: 10px;">
@@ -28,6 +27,7 @@
         </u-grid> -->
         <u-cell-group>
           <u-cell title="项目列表" @click="projectListClicked" :isLink="true" arrow-direction="right"></u-cell>
+          <!-- <u-cell title="开启订阅通知" @click="openSubscribeMessageClicked" :isLink="true" arrow-direction="right"></u-cell> -->
           <u-cell title="关于" url="/pages/about/index" :isLink="true" arrow-direction="right"></u-cell>
           <u-cell title="意见反馈" @click="feedbackClicked" :isLink="true" arrow-direction="right"></u-cell>
         </u-cell-group>
@@ -42,6 +42,13 @@ import loginUser from '../../../common/currentUser.js';
 import cloudApi from '../../../common/cloudApi.js';
 
 export default {
+  onLoad() {
+    let that = this;
+    uni.$on('LOGIN_CHANGED', () => {
+      console.log('login changed');
+      that.userInfo = that.$store.state.userInfo;
+    });
+  },
   mounted() {
     this.initPage();
   },
@@ -77,13 +84,14 @@ export default {
         desc: '用于完善会员资料',
         success: res => {
           that.userInfo = Object.assign(that.userInfo, res.userInfo);
+          console.log(that.userInfo);
           loginUser.updateUserInfo(that.userInfo);
           that.setUserInfo(that.userInfo);
         }
       });
     },
     async userClicked() {
-      if (this.userInfo && this.userInfo.nickName && this.userInfo.nickName != '微信用户') {
+      if (this.$store.state.userInfo && this.$store.state.userInfo.nickName && this.$store.state.userInfo.nickName != '微信用户') {
         // 退出登录
         uni.setStorageSync('is_login', false);
         this.setUserInfo({
@@ -102,9 +110,9 @@ export default {
       }
     },
     projectListClicked() {
-      if (this.userInfo && this.userInfo._id) {
+      if (this.$store.state.userInfo && this.$store.state.userInfo._id) {
         uni.navigateTo({
-          url: '../../project/index?userId=' + this.userInfo._id
+          url: '../../project/index?userId=' + this.$store.state.userInfo._id
         });
       } else {
         uni.showToast({
@@ -114,9 +122,56 @@ export default {
       }
     },
     feedbackClicked() {
-      if (this.userInfo && this.userInfo._id) {
+      if (this.$store.state.userInfo && this.$store.state.userInfo._id) {
         uni.navigateTo({
-          url: '../../feedback/index?userId=' + this.userInfo._id
+          url: '../../feedback/index?userId=' + this.$store.state.userInfo._id
+        });
+      } else {
+        uni.showToast({
+          title: '请您先登录小程序',
+          icon: 'none'
+        });
+      }
+    },
+    async openSubscribeMessageClicked() {
+      let that = this;
+      if (this.$store.state.userInfo && this.$store.state.userInfo._id) {
+        let userCount = await that.uniDb
+          .collection('subscribe_message')
+          .where({
+            user_id: this.$store.state.userInfo._id
+          })
+          .count();
+
+        uni.requestSubscribeMessage({
+          tmplIds: ['98iqExrOLkphYuTIq5SkDdNUTy4CwYFYR6_G2tu8zZ4'],
+          success(res) {
+            console.log(res);
+            let result = res;
+            delete result['errMsg'];
+
+            if (userCount.result.total <= 0) {
+              that.uniDb.collection('subscribe_message').add({
+                user_id: that.$store.state.userInfo._id,
+                templeteid_list: result
+              });
+            } else {
+              that.uniDb
+                .collection('subscribe_message')
+                .where({
+                  user_id: that.$store.state.userInfo._id
+                })
+                .update({
+                  templeteid_list: result
+                });
+            }
+          },
+          fail(res) {
+            uni.showToast({
+              title: '开启订阅消息失败，错误信息：' + res.errMsg,
+              icon: 'none'
+            });
+          }
         });
       } else {
         uni.showToast({

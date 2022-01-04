@@ -18,6 +18,21 @@
     <!-- <uni-card> -->
       <!-- <uni-section title="更新日志"></uni-section> -->
       <uni-group mode="card" title="更新日志" top="15">
+        <uni-group mode="card" title="V1.0.3">
+          <view>
+            <text style="font-size: 13px;">
+              增加小程序更新功能
+              修复部分BUG
+            </text>
+          </view>
+        </uni-group>
+        <uni-group mode="card" title="V1.0.2">
+          <view>
+            <text style="font-size: 13px;">
+              修复一些BUG
+            </text>
+          </view>
+        </uni-group>
         <uni-group mode="card" title="V1.0.1">
           <view>
             <text style="font-size: 13px;">
