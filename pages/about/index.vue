@@ -18,6 +18,13 @@
     <!-- <uni-card> -->
       <!-- <uni-section title="更新日志"></uni-section> -->
       <uni-group mode="card" title="更新日志" top="15">
+        <uni-group mode="card" title="V1.0.5">
+          <view>
+            <text style="font-size: 13px;">
+              修复统计小数位数问题
+            </text>
+          </view>
+        </uni-group>
         <uni-group mode="card" title="V1.0.4">
           <view>
             <text style="font-size: 13px;">

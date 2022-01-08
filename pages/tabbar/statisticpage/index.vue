@@ -269,7 +269,7 @@ export default {
                   categories.push(data[i].project_name);
                 }
                 let value = {};
-                value[data[i].reimed] = data[i]['total_money'];
+                value[data[i].reimed] = data[i]['total_money'].toFixed(2);
                 if (!map.hasOwnProperty(data[i].project_name)) {
                   map[data[i].project_name] = {};
                 }
@@ -282,18 +282,18 @@ export default {
                 let hasReimed = false,
                   hasUnreimed = false;
                 if (value.hasOwnProperty('1')) {
-                  series[0].data.push(value['1']);
+                  series[0].data.push(value['1'].toFixed(2));
                   hasReimed = true;
                 }
                 if (value.hasOwnProperty('0')) {
-                  series[1].data.push(value['0']);
+                  series[1].data.push(value['0'].toFixed(2));
                   hasUnreimed = true;
                 }
                 if (!hasReimed) {
-                  series[0].data.push(0);
+                  series[0].data.push('0.00');
                 }
                 if (!hasUnreimed) {
-                  series[1].data.push(0);
+                  series[1].data.push('0.00');
                 }
               }
 
@@ -315,7 +315,7 @@ export default {
                 }
                 roseSeries[0].data.push({
                   name: key,
-                  value: total
+                  value: total.toFixed(2)
                 });
               }
               that.projectChartRoseData['series'] = roseSeries;
@@ -393,7 +393,7 @@ export default {
                   categories.push(data[i].text);
                 }
                 let value = {};
-                value[data[i].reimed] = data[i]['total_money'];
+                value[data[i].reimed] = data[i]['total_money'].toFixed(2);
                 if (!map.hasOwnProperty(data[i].text)) {
                   map[data[i].text] = {};
                 }
@@ -407,24 +407,24 @@ export default {
                     // 未报销
                     let money = map[key][m];
                     total += money;
-                    series[1].data.push(money);
+                    series[1].data.push(money.toFixed(2));
                   } else {
                     let money = 0.0;
                     total += money;
-                    series[1].data.push(money);
+                    series[1].data.push(money.toFixed(2));
                   }
                   if (m === '1') {
                     let money = map[key][m];
                     total += money;
-                    series[0].data.push(money);
+                    series[0].data.push(money.toFixed(2));
                   } else {
                     let money = 0.0;
                     total += money;
-                    series[0].data.push(money);
+                    series[0].data.push(money.toFixed(2));
                   }
                 }
-                series[2].data.push(total);
-                series[3].data.push(total);
+                series[2].data.push(total.toFixed(2));
+                series[3].data.push(total.toFixed(2));
               }
 
               that.dateChartData['categories'] = categories;
