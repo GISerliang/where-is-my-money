@@ -18,6 +18,23 @@
     <!-- <uni-card> -->
       <!-- <uni-section title="更新日志"></uni-section> -->
       <uni-group mode="card" title="更新日志" top="15">
+        <uni-group mode="card" title="V1.1.0">
+          <view>
+            <text style="font-size: 13px;">
+              项目开源，欢迎star
+            </text>
+            <view class="u-content">
+              <a href="https://github.com/GISerliang/where-is-my-money.git">where-is-my-money</a>
+            </view>
+          </view>
+        </uni-group>
+        <uni-group mode="card" title="V1.0.6">
+          <view>
+            <text style="font-size: 13px;">
+              首页增加按照月份折叠功能
+            </text>
+          </view>
+        </uni-group>
         <uni-group mode="card" title="V1.0.5">
           <view>
             <text style="font-size: 13px;">
@@ -87,4 +104,11 @@ export default {
 /deep/ .u-image {
   display: block !important;
 }
+
+/deep/ .u-content {
+        padding: 20rpx;
+        font-size: 30rpx;
+        color: $u-content-color;
+        line-height: 1.6;
+    }
 </style>
