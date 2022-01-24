@@ -1,48 +1,56 @@
 <template>
   <view class="container">
     <uni-section class="unreimed-section" title="未报销" type="line"></uni-section>
-    <uni-swipe-action>
-      <uni-swipe-action-item
-        class="unreimed-swipe-action-item"
-        :right-options="unreimedOptions"
-        :left-options="deleteOptions"
-        v-for="(item, index) in unreimedItems"
-        :key="item._id"
-        autoClose="true"
-        @click="onActionUnreimedItemClick($event, item)"
-      >
-        <uni-list-item
-          class="unreimed-list-item unreimed-view"
-          show-arrow="false"
-          :title="item.money.toFixed(2) + '-' + item.summary"
-          :note="item.project_name + ' ' + new Date(item.date).Format('yyyy-MM-dd')"
-          clickable
-          @click="onItemTap(index, item, 'unreimed')"
-        ></uni-list-item>
-      </uni-swipe-action-item>
-    </uni-swipe-action>
+    <u-collapse accordion>
+      <u-collapse-item v-for="(subItems, index) in unreimedItems" :title="index">
+        <uni-swipe-action>
+          <uni-swipe-action-item
+            class="unreimed-swipe-action-item"
+            :right-options="unreimedOptions"
+            :left-options="deleteOptions"
+            v-for="(item, _index) in subItems"
+            :key="item._id"
+            autoClose="true"
+            @click="onActionUnreimedItemClick($event, item)"
+          >
+            <uni-list-item
+              class="unreimed-list-item unreimed-view"
+              show-arrow="false"
+              :title="item.money.toFixed(2) + '-' + item.summary"
+              :note="item.project_name + ' ' + new Date(item.date).Format('yyyy-MM-dd')"
+              clickable
+              @click="onItemTap(_index, item, 'unreimed')"
+            ></uni-list-item>
+          </uni-swipe-action-item>
+        </uni-swipe-action>
+      </u-collapse-item>
+    </u-collapse>
 
     <uni-section title="已报销" type="line"></uni-section>
-    <uni-swipe-action>
-      <uni-swipe-action-item
-        class="reimed-swipe-action-item"
-        :left-options="deleteOptions"
-        :right-options="reimedOptions"
-        v-for="(item, index) in reimedItems"
-        :key="item._id"
-        autoClose="true"
-        @click="onActionReimedItemClick($event, item)"
-      >
-        <uni-list-item
-          class="reimed-list-item reimed-view"
-          show-arrow="false"
-          :title="item.money.toFixed(2) + '-' + item.summary"
-          :note="item.project_name + ' ' + new Date(item.date).Format('yyyy-MM-dd')"
-          clickable
-          @click="onItemTap(index, item, 'reimed')"
-        ></uni-list-item>
-      </uni-swipe-action-item>
-    </uni-swipe-action>
+    <u-collapse accordion>
+      <u-collapse-item v-for="(subItems, index) in reimedItems" :title="index">
+        <uni-swipe-action>
+          <uni-swipe-action-item
+            class="reimed-swipe-action-item"
+            :right-options="reimedOptions"
+            :left-options="deleteOptions"
+            v-for="(item, _index) in subItems"
+            :key="item._id"
+            autoClose="true"
+            @click="onActionReimedItemClick($event, item)"
+          >
+            <uni-list-item
+              class="reimed-list-item unreimed-view"
+              show-arrow="false"
+              :title="item.money.toFixed(2) + '-' + item.summary"
+              :note="item.project_name + ' ' + new Date(item.date).Format('yyyy-MM-dd')"
+              clickable
+              @click="onItemTap(_index, item, 'reimed')"
+            ></uni-list-item>
+          </uni-swipe-action-item>
+        </uni-swipe-action>
+      </u-collapse-item>
+    </u-collapse>
 
     <view class="uni-form-item uni-column">
       <u-button type="primary" class="primary-button" @click="addRecord">
@@ -338,7 +346,19 @@ export default {
           .then(res => {
             console.log('search unreimed', res);
             if (res.result) {
-              that.unreimedItems = res.result.data;
+              // that.unreimedItems = res.result.data;
+              let items = {};
+              for (let i in res.result.data) {
+                let item = res.result.data[i];
+                let date = new Date(item.date).Format('yyyy-MM');
+                if (Object.keys(items).includes(date)) {
+                  items[date].push(item);
+                } else {
+                  items[date] = [item];
+                }
+              }
+              that.unreimedItems = items;
+              console.log(items);
             } else {
               uni.showToast({
                 title: '查询未报销失败: ' + res.result.message,
@@ -369,7 +389,18 @@ export default {
           .then(res => {
             console.log('search reimed', res);
             if (res.result) {
-              that.reimedItems = res.result.data;
+              // that.reimedItems = res.result.data;
+              let items = {};
+              for (let i in res.result.data) {
+                let item = res.result.data[i];
+                let date = new Date(item.date).Format('yyyy-MM');
+                if (Object.keys(items).includes(date)) {
+                  items[date].push(item);
+                } else {
+                  items[date] = [item];
+                }
+              }
+              that.reimedItems = items;
             } else {
               uni.showToast({
                 title: '查询已报销失败: ' + res.result.message,
@@ -404,7 +435,7 @@ export default {
 }
 </style>
 
-<style scoped>
+<style lang="scss" scoped>
 @font-face {
   font-family: uniicons;
   font-weight: normal;
@@ -424,6 +455,10 @@ page {
 view {
   font-size: 14px;
   line-height: inherit;
+}
+
+/deep/ .u-collapse-item__content__text {
+  padding: 0 !important;
 }
 
 uni-section {
@@ -452,6 +487,18 @@ uni-swipe-action-item {
 .unreimed-list-item {
   width: 100%;
   text-align: left;
+}
+
+/deep/ .unreimed-list-item .uni-list-item {
+  &__container {
+    padding-left: 25px !important;
+  }
+}
+
+/deep/ .reimed-list-item .uni-list-item {
+  &__container {
+    padding-left: 25px !important;
+  }
 }
 
 .cont {
